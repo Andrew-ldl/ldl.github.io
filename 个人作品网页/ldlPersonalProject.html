@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qt LDL作品集</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 999;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    nav {
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .nav-links a {
+      margin-left: 24px;
+      text-decoration: none;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: #007bff;
+    }
+
+    .hero {
+      margin-top: 100px;
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .portfolio {
+      padding: 40px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      width: 60px;
+      height: 4px;
+      background: #007bff;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -10px;
+      border-radius: 2px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      background: #e9f2ff;
+      color: #007bff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #007bff;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      margin-top: 40px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 800px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      /* 调高高度，适配窗口截图 */
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+      object-fit: contain;
+      /* 完整显示，不裁剪 */
+      display: none;
+    }
+
+    /* .carousel {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            overflow: hidden;
+        }
+
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        } */
+    .carousel img.active {
+      display: block;
+    }
+
+    .prev,
+    .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 16px;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 10;
+      border-radius: 4px;
+    }
+
+    .prev {
+      left: 15px;
+    }
+
+    .next {
+      right: 15px;
+    }
+
+    .modal-text {
+      padding: 25px;
+    }
+
+    .modal-text h3 {
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .modal-text p {
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .close-btn {
+      margin-top: 20px;
+      background: #666;
+    }
+
+    .close-btn:hover {
+      background: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">Qt LDL作品集</div>
+        <div class="nav-links">
+          <a href="#home">首页</a>
+          <a href="#portfolio">项目</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="container">
+      <h1>你好，我是开发者</h1>
+      <p>这里集中展示了我基于Qt平台开发的软件作品，涵盖了实用工具、客户端桌面应用以及网络通信等项目，既有工作产出，也有业余探索。</p>
+    </div>
+  </section>
+
+  <section class="portfolio" id="portfolio">
+    <div class="container">
+      <h2 class="section-title">我的项目</h2>
+      <div class="grid">
+
+        <!-- 项目1 -->
+        <div class="card">
+          <img src="images/awg1.png", alt="项目截图">
+          <div class="card-body">
+            <h3 class="card-title">任意波形发生器</h3>
+            <p class="card-desc">一款上位机波形生成工具，支持多种波形数据下发至ARM平台。
+              主要特性包括：波形实时预览、参数动态调节、文件传输能力。</p>
+            <div class="card-tags">
+              <span class="tag">Qt</span>
+              <span class="tag">TCP/IP</span>
+              <span class="tag">波形预览</span>
+              <span class="tag">自定义控件</span>
+            </div>
+            <button class="btn" data-id="1">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 项目2 -->
+        <div class="card">
+          <img src="images/delay1.jpg", alt="项目截图">
+          <div class="card-body">
+            <h3 class="card-title">延时同步机</h3>
+            <p class="card-desc">一款跨平台上位机应用，支持多种通信协议，用于集中配置与下发延时、同步等各类控制参数。</p>
+            <div class="card-tags">
+              <span class="tag">Qt</span>
+              <span class="tag">TCP/IP</span>
+              <span class="tag">串口</span>
+              <span class="tag">VXI11</span>
+              <span class="tag">Ubuntu</span>
+              <span class="tag">校准</span>
+            </div>
+            <button class="btn" data-id="2">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 项目3 -->
+        <div class="card">
+          <img src="images/autoTest1.jpg", alt="项目截图">
+          <div class="card-body">
+            <h3 class="card-title">燃油自动测试系统</h3>
+            <p class="card-desc">基于数据库驱动的自动化测试平台，支持测试用例批量导入与顺序执行，
+              提供丰富的调试接口（异常断点、单步执行），提升测试效率与可靠性。</p>
+            <div class="card-tags">
+              <span class="tag">Qt</span>
+              <span class="tag">Model/View</span>
+              <span class="tag">NI-VISA</span>
+              <span class="tag">串口</span>
+              <span class="tag">QSlite</span>
+            </div>
+            <button class="btn" data-id="3">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 项目4 -->
+        <div class="card">
+          <img src="images/被动源1.jpg" alt="项目截图">
+          <div class="card-body">
+            <h3 class="card-title">被动源上位机软件</h3>
+            <p class="card-desc">集成参数下发控制、全自动校准与测试三大核心模块，支持校准精度与范围的动态配置。</p>
+            <div class="card-tags">
+              <span class="tag">Qt</span>
+              <span class="tag">自动校准/测试</span>
+              <span class="tag">功率计/频谱仪程控</span>
+            </div>
+            <button class="btn" data-id="4">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 项目5 -->
+        <div class="card">
+          <img src="images/sftp1.jpg" alt="项目截图">
+          <div class="card-body">
+            <h3 class="card-title">SFTP文件传输工具</h3>
+            <p class="card-desc">SFTP文件传输模块专为远程文件维护而设计，支持向远端上传或从远端拉取关键文件。</p>
+            <div class="card-tags">
+              <span class="tag">Qt</span>
+              <span class="tag">SFTP</span>
+              <span class="tag">QSsh</span>
+            </div>
+            <button class="btn" data-id="5">查看详情</button>
+          </div>
+        </div>
+
+        <!-- 项目6 -->
+        <div class="card">
+          <img src="images/MFIO1.png" alt="项目截图">
+          <div class="card-body">
+            <h3 class="card-title">多功能IO上位机软件</h3>
+            <p class="card-desc">提供可视化上位机交互界面及配套驱动函数接口，支持波形实时采集与显示、模拟信号输出等功能。</p>
+            <div class="card-tags">
+              <span class="tag">LabWindows/CVI</span>
+              <span class="tag">NI-VISA</span>
+              <span class="tag">IVI规范</span>
+              <span class="tag">数据采集/波形绘制</span>
+            </div>
+            <button class="btn" data-id="6">查看详情</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 弹窗 -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="carousel" id="carousel">
+        <button class="prev">❮</button>
+        <button class="next">❯</button>
+        <img>
+        <img>
+        <img>
+        <img>
+        <img>
+        <img>
+        <img>
+        <img>
+      </div>
+      <div class="modal-text">
+        <h3 id="modalTitle"></h3>
+        <p id="modalDesc"></p>
+        <button class="btn close-btn">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Qt LDL作品集 | All Rights Reserved</p>
+  </footer>
+
+  <script>
+    let currentImgIndex = 0;
+    let currentImages = [];
+    const projectData = {
+      1: {
+        images: [
+          "images/awg1.png",
+          "images/awg2.png",
+          "images/awg3.png",
+          "images/awg4.png",
+          "images/awg5.png"
+        ],
+        title: "任意波形发生器",
+        desc: "基于Qt开发的上位机波形生成软件，支持正弦波、方波、三角波、噪声等多种波形类型，并通过TCP/IP协议将波形数据下发至ARM端。"+
+          "核心功能包括：波形实时预览、参数动态调节、波形文件传输、设备自动连接、网线热插拔检测。"
+      },
+      2: {
+        images: [
+          "images/delay1.jpg",
+          "images/delay2.jpg",
+          "images/delay3.jpg",
+          "images/delay4.jpg",
+          "images/delay5.jpg",
+          "images/delay6.jpg",
+          "images/delay7.jpg"
+        ],
+        title: "延时同步机",
+        desc: "基于Qt开发的跨平台设备控制软件，支持串口与网口双通信模式（串口适配Ubuntu屏幕版，网口用于远程控制）。" +
+          "核心功能包括：延时/幅度/触发等参数的统一配置、分段线性手动校准、程序远程更新，同时支持开机自连接与热插拔检测。"
+      },
+      3: {
+        images: [
+          "images/autoTest1.jpg",
+          "images/autoTest2.jpg",
+          "images/autoTest3.jpg",
+          "images/autoTest4.jpg"
+        ],
+        title: "自动测试系统",
+        desc: "一款面向产品出厂验证的全功能自动化测试平台。"+
+          "核心能力包括：基于数据库指令编排的自动测试流程、完善的调试手段（断点/单步/单条执行）、"+
+          "灵活的用例管控（启用/禁用/参数查看）、实时数据记录与可筛选的测试报告生成。同时支持手动测试、用户权限管理（登录/权限/用户组）及操作日志。显著提升产品调试与出厂验证效率。"
+      },
+      4: {
+        images: [
+          "images/被动源1.jpg",
+          "images/被动源2.jpg",
+          "images/被动源3.jpg"
+        ],
+        title: "被动源上位机软件",
+        desc: "用于被动源设备控制的专业上位机软件。核心功能包括：频率/功率等参数的配置与输出、自动化校准（精度可调）、自动测试（范围/步进可配置）、自动测试表格生成。实现了从参数设置到测试验证的全流程自动化。"
+      },
+      5: {
+        images: [
+          "images/sftp1.jpg"
+        ],
+        title: "SFTP文件传输工具",
+        desc: "专为远程文件维护设计的通用更新组件。核心功能：支持本地多文件批量上传至远端、远端文件夹下所有文件批量下载（仅文件）。适用于校准文件、比特文件、应用程序等关键文件的远程传输，便于设备固件与配置在线更新。"
+      },
+      6: {
+        images: [
+          "images/MFIO1.png",
+          "images/MFIO2.png",
+          "images/MFIO3.jpg",
+          "images/MFIO4.jpg"
+        ],
+        title: "多功能IO上位机软件",
+        desc: "一款面向IO设备控制与仿真的上位机软件。核心功能包括：采集信号实时显示、模拟信号数据生成与输出，以及完整的仿真测试能力（模拟信号输入输出）。可用于真实设备监控与无硬件环境下的功能仿真验证。"
+      }
+    };
+    // 自动绑定所有按钮
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        openModal(id);
+      });
+    });
+    document.querySelector('.prev').addEventListener('click', prevImg);
+    document.querySelector('.next').addEventListener('click', nextImg);
+    document.querySelector('.close-btn').addEventListener('click', closeModal);
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modal')) closeModal();
+    });
+
+    function openModal(id) {
+      let p = projectData[id];
+      currentImages = p.images;
+      currentImgIndex = 0;
+      document.getElementById("modalTitle").innerText = p.title;
+      document.getElementById("modalDesc").innerText = p.desc;
+      updateCarousel();
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function updateCarousel() {
+      let imgs = document.querySelectorAll("#carousel img");
+      imgs.forEach((img, i) => {
+        if (i < currentImages.length) {
+          img.src = currentImages[i];
+          img.classList.toggle("active", i === currentImgIndex);
+        } else {
+          img.classList.remove("active");
+        }
+      });
+    }
+
+    function prevImg() {
+      currentImgIndex = (currentImgIndex - 1 + currentImages.length) % currentImages.length;
+      updateCarousel();
+    }
+
+    function nextImg() {
+      currentImgIndex = (currentImgIndex + 1) % currentImages.length;
+      updateCarousel();
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+  </script>
+
+</body>
+
+</html>
